@@ -1,4 +1,4 @@
-![arXiv Titler icon](iamges/waiter128.png)
+![arXiv Titler icon](images/waiter128.png)
 
 # arXiv Titler
 
