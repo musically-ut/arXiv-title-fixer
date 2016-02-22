@@ -1,6 +1,6 @@
 ![arXiv Titler icon](images/waiter128.png)
 
-# arXiv Titler
+# arXiv titler fixer
 
 Set correct tab `<title>` on arXiv pages.
 
