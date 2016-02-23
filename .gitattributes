@@ -1,2 +1,3 @@
-/images export-ignore
+/images/screen-shots/ export-ignore
 .gitignore export-ignore
+Makefile export-ignore
