@@ -4,17 +4,29 @@
 
 Set correct tab `<title>` on arXiv pages.
 
-  - [Chrome extension](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
+### <img alt="Supports Chrome" src="images/Chrome.png" width="24"> [Chrome extension](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
 
-![arXiv promotion](images/screen-shots/arXiv-title-fixer-promotion.png)
+----
 
-Adds a little icon to _fix_ the tab title:
+<p style="align: center">
+<img alt="Promotion" src="images/screen-shots/arXiv-title-fixer-promotion.png">
+</p>
 
-![arXiv title fixing](images/screen-shots/arXiv-title-giver-title-change.png)
+### Adds a little icon to _fix_ the tab title
 
-Works really well with [The Great Suspender](https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg?hl=en):
 
-![arXiv title fixer with The Great Suspender](images/screen-shots/arXiv-The-Great-Suspender.png)
+<p style="align: center">
+<img alt="arXiv title fixing" src="images/screen-shots/arXiv-title-giver-title-change.png" width="80%">
+</p>
+
+### Integrates well with [The Great Suspender](https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg?hl=en)
+
+
+<p style="align: center">
+<img alt="arXiv title fixer with The Great Suspender" src="images/screen-shots/arXiv-The-Great-Suspender.png" width="80%">
+</p>
+
+----
 
 ### Acknowledgement 
 
