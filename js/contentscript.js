@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 var DEBUG = false;
@@ -50,7 +51,7 @@ function addTitleToHead(paperTitle) {
         });
         document.head.appendChild(title);
     } else {
-        var head = document.createElement('head');
+        head = document.createElement('head');
         head.appendChild(title);
         var html = document.body.parentElement;
         html.insertBefore(head, document.body);
@@ -71,6 +72,22 @@ chrome.runtime.onMessage.addListener(function () {
     log('Got message!');
 });
 
+var stretchFactor = 1.5,
+    initialTimeout = 100;
+
+/* With the settings, stretchFactor = 1.5 and initialTimeout = 100, the plugin
+ * will be run ~ 25 times.
+ */
+function exponentialBackoff(paperTitle, timeout) {
+    setTimeout(function () {
+        addTitleToHead(paperTitle);
+        // If the paper hasn't loaded after 15 minutes, just give up.
+        if (timeout < 900000) {
+            exponentialBackoff(paperTitle, stretchFactor * timeout);
+        }
+    }, timeout);
+}
+
 if (paperId !== null) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
@@ -78,7 +95,7 @@ if (paperId !== null) {
             if (xhr.status === 200) {
                 try {
                     var paperTitle = getPaperTitle(xhr.responseXML.childNodes[0]);
-                    addTitleToHead(paperTitle);
+                    exponentialBackoff(paperTitle, 100);
                     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         log('Running on-message.');
                         addTitleToHead(paperTitle);
@@ -90,11 +107,13 @@ if (paperId !== null) {
                 warn("Cannot handle response with status ", xhr.status);
             }
         }
-    }
+    };
+
     xhr.onerror = function () {
         warn("Unable to fetch paper data from arXiv API.");
-    }
+    };
+
     xhr.open("GET", "http://export.arxiv.org/api/query?id_list=" + paperId);
     xhr.responseType = "document";
     xhr.send();
-}
+}})();
