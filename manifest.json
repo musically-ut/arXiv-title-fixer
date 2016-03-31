@@ -15,8 +15,9 @@
   ],
   "content_scripts": [
     {
-      "matches": [ 
-        "*://arxiv.org/pdf/*" 
+      "matches": [
+        "*://arxiv.org/pdf/*",
+        "*://arxiv.org/abs/*"
       ],
       "js": [
         "js/contentscript.js"
