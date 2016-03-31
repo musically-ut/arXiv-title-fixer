@@ -1,3 +1,4 @@
+(function() {
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -19,3 +20,4 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.pageAction.onClicked.addListener(function (tab) {
     chrome.tabs.sendMessage(tab.id, "update-page-title.");
 });
+})();
