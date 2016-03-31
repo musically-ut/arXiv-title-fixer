@@ -3,6 +3,7 @@
 
 var DEBUG = false;
 var _logName = 'arXiv Titler: ';
+var TITLE_PLACEHOLDER = "Unknown title.";
 
 function log() {
     if (DEBUG) {
@@ -20,7 +21,7 @@ function warn() {
     }
 }
 
-function getPaperTitle(feed) {
+function getPaperTitleFromResponse(feed) {
     var paperTitle = null;
     Array.prototype.slice.call(feed.children).forEach(function (child) {
         if (child.nodeName.toLowerCase() === 'entry') {
@@ -34,7 +35,7 @@ function getPaperTitle(feed) {
         }
     });
 
-    return (paperTitle === null) ? "Unknown title." : paperTitle;
+    return (paperTitle === null) ? TITLE_PLACEHOLDER : paperTitle;
 }
 
 function addTitleToHead(paperTitle) {
@@ -58,23 +59,6 @@ function addTitleToHead(paperTitle) {
     }
 }
 
-var paperId = null;
-
-try {
-    var pathComponents = window.location.pathname.split('/');
-    var pdfName = pathComponents[pathComponents.length - 1];
-    paperId = /([^v]*)(v[0-9]*)?\.pdf/.exec(pdfName)[1];
-} catch(e) {
-    warn("Could not get submission ID. Error: ", e);
-}
-
-chrome.runtime.onMessage.addListener(function () {
-    log('Got message!');
-});
-
-var stretchFactor = 1.5,
-    initialTimeout = 100;
-
 /* With the settings, stretchFactor = 1.5 and initialTimeout = 100, the plugin
  * will be run ~ 25 times.
  */
@@ -88,32 +72,73 @@ function exponentialBackoff(paperTitle, timeout) {
     }, timeout);
 }
 
-if (paperId !== null) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                try {
-                    var paperTitle = getPaperTitle(xhr.responseXML.childNodes[0]);
-                    exponentialBackoff(paperTitle, 100);
-                    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-                        log('Running on-message.');
-                        addTitleToHead(paperTitle);
-                    });
-                } catch (e) {
-                    warn("Unable to determine title of paper. Error: ", e);
+function setTitleForPdf() {
+    var paperId = null;
+
+    try {
+        var pathComponents = window.location.pathname.split('/');
+        var pdfName = pathComponents[pathComponents.length - 1];
+        paperId = /([^v]*)(v[0-9]*)?\.pdf/.exec(pdfName)[1];
+    } catch(e) {
+        warn("Could not get submission ID. Error: ", e);
+    }
+
+    chrome.runtime.onMessage.addListener(function () {
+        log('Got message!');
+    });
+
+    var stretchFactor = 1.5,
+        initialTimeout = 100;
+
+
+    if (paperId !== null) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        var paperTitle = getPaperTitleFromResponse(xhr.responseXML.childNodes[0]);
+                        exponentialBackoff(paperTitle, 100);
+                        chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+                            log('Running on-message.');
+                            addTitleToHead(paperTitle);
+                        });
+                    } catch (e) {
+                        warn("Unable to determine title of paper. Error: ", e);
+                    }
+                } else {
+                    warn("Cannot handle response with status ", xhr.status);
                 }
-            } else {
-                warn("Cannot handle response with status ", xhr.status);
             }
-        }
-    };
+        };
 
-    xhr.onerror = function () {
-        warn("Unable to fetch paper data from arXiv API.");
-    };
+        xhr.onerror = function () {
+            warn("Unable to fetch paper data from arXiv API.");
+        };
 
-    xhr.open("GET", "http://export.arxiv.org/api/query?id_list=" + paperId);
-    xhr.responseType = "document";
-    xhr.send();
-}})();
+        xhr.open("GET", "http://export.arxiv.org/api/query?id_list=" + paperId);
+        xhr.responseType = "document";
+        xhr.send();
+    }
+}
+
+function setTitleForAbs() {
+    var paperTitle;
+    var titleElements = document.getElementsByClassName('title');
+    if (titleElements.length > 0) {
+        paperTitle = titleElements[0].innerText;
+    } else {
+        warn("Unable to find a title element in the page.")
+        paperTitle = TITLE_PLACEHOLDER;
+    }
+    addTitleToHead(paperTitle);
+}
+
+var pathComponents = window.location.pathname.split('/');
+if (pathComponents[pathComponents.length - 1].endsWith('.pdf') ) {
+    setTitleForPdf();
+} else {
+    setTitleForAbs();
+}
+
+})();
