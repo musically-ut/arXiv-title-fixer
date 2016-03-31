@@ -6,6 +6,11 @@
   "icons": {
     "512": "images/waiter512.png"
   },
+  "application": {
+    "gecko": {
+      "id": "arxiv-title-fixer@musicallyut.in"
+    }
+  },
   "background": {
     "scripts": [ "js/background.js" ],
     "persistent": false
