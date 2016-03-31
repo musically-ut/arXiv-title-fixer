@@ -62,6 +62,9 @@ function addTitleToHead(paperTitle) {
 /* With the settings, stretchFactor = 1.5 and initialTimeout = 100, the plugin
  * will be run ~ 25 times.
  */
+var stretchFactor = 1.5,
+    initialTimeout = 100;
+
 function exponentialBackoff(paperTitle, timeout) {
     setTimeout(function () {
         addTitleToHead(paperTitle);
@@ -82,14 +85,6 @@ function setTitleForPdf() {
     } catch(e) {
         warn("Could not get submission ID. Error: ", e);
     }
-
-    chrome.runtime.onMessage.addListener(function () {
-        log('Got message!');
-    });
-
-    var stretchFactor = 1.5,
-        initialTimeout = 100;
-
 
     if (paperId !== null) {
         var xhr = new XMLHttpRequest();
@@ -128,7 +123,7 @@ function setTitleForAbs() {
     if (titleElements.length > 0) {
         paperTitle = titleElements[0].innerText;
     } else {
-        warn("Unable to find a title element in the page.")
+        warn("Unable to find a title element in the page.");
         paperTitle = TITLE_PLACEHOLDER;
     }
     addTitleToHead(paperTitle);
