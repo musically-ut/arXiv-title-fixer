@@ -4,7 +4,8 @@
 
 Set correct tab `<title>` on arXiv pages.
 
-### <img alt="Supports Chrome" src="images/Chrome.png" width="24"> [Chrome extension](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
+
+[![Chrome extension](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
 
 ----
 
