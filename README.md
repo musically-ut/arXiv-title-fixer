@@ -4,8 +4,10 @@
 
 Set correct tab `<title>` on arXiv pages.
 
-
 [![Chrome extension](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
+
+
+**A [userscript](https://gist.github.com/o-jasper/df6f93e8c1a9ec8d3ff59f0266dfe368) for use with [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) or [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en).**
 
 ----
 
