@@ -111,7 +111,7 @@ function setTitleForPdf() {
             warn("Unable to fetch paper data from arXiv API.");
         };
 
-        xhr.open("GET", "http://export.arxiv.org/api/query?id_list=" + paperId);
+        xhr.open("GET", "https://export.arxiv.org/api/query?id_list=" + paperId);
         xhr.responseType = "document";
         xhr.send();
     }
