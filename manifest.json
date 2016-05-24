@@ -1,6 +1,6 @@
 {
   "name": "arXiv title fixer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "manifest_version": 2,
   "description": "Set titles of papers on arXiv as <title> of the pdf-tabs.",
   "icons": {
