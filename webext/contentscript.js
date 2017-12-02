@@ -70,6 +70,7 @@ function exponentialBackoff(paperTitle, timeout) {
         addTitleToHead(paperTitle);
         // If the paper hasn't loaded after 15 minutes, just give up.
         if (timeout < 900000) {
+            log('Running for timeout: ', timeout);
             exponentialBackoff(paperTitle, stretchFactor * timeout);
         }
     }, timeout);

@@ -1,1 +1,4 @@
 *.zip
+build/
+manifest.json
+.tmp/
