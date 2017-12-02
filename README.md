@@ -1,4 +1,4 @@
-![arXiv Titler icon](images/waiter128.png)
+![arXiv Titler icon](webext/images/waiter128.png)
 
 # arXiv titler fixer
 
@@ -10,6 +10,10 @@ Set correct tab `<title>` on arXiv pages.
 This can be installed standalone from the [Chrome web-store](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien).
 
 [![Chrome extension](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/arxiv-title-fixer/pandhendpghoedojdhookbedinmhjien)
+
+### Firefox addon
+
+It is also available as an [addon on Firefox](https://addons.mozilla.org/en-US/firefox/addon/arxiv-title-fixer/).
 
 
 ### Userscript
