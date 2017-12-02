@@ -22,33 +22,33 @@ This can be installed standalone from the [Chrome web-store](https://chrome.goog
 
 
 <p style="text-align: center">
-<img alt="Promotion" src="images/screen-shots/arXiv-title-fixer-promotion.png">
+<img alt="Promotion" src="webext/images/screen-shots/arXiv-title-fixer-promotion.png">
 </p>
 
 ### Adds a little icon to _fix_ the tab title
 
 
 <p style="text-align: center">
-<img alt="arXiv title fixing" src="images/screen-shots/arXiv-title-giver-title-change.png" width="70%">
+<img alt="arXiv title fixing" src="webext/images/screen-shots/arXiv-title-giver-title-change.png" width="70%">
 </p>
 
 ### Integrates well with [The Great Suspender](https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg?hl=en)
 
 
 <p style="text-align: center">
-<img alt="arXiv title fixer with The Great Suspender" src="images/screen-shots/arXiv-The-Great-Suspender.png" width="70%">
+<img alt="arXiv title fixer with The Great Suspender" src="webext/images/screen-shots/arXiv-The-Great-Suspender.png" width="70%">
 </p>
 
 ### Works with Firefox as well!
 
 <p style="text-align: center">
-<img alt="arXiv title fixing" src="images/screen-shots/arXiv-title-giver-title-change.firefox.png" width="70%">
+<img alt="arXiv title fixing" src="webext/images/screen-shots/arXiv-title-giver-title-change.firefox.png" width="70%">
 </p>
 
 ### Integrates well with [Tab Suspender](https://addons.mozilla.org/en-US/firefox/addon/tab-suspender-tab-unloader/)
 
 <p style="text-align: center">
-<img alt="arXiv title fixing" src="images/screen-shots/arXiv-title-fixer-with-tab-suspender.png" width="70%">
+<img alt="arXiv title fixing" src="webext/images/screen-shots/arXiv-title-fixer-with-tab-suspender.png" width="70%">
 </p>
 
 ----
