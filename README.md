@@ -13,7 +13,11 @@ This can be installed standalone from the [Chrome web-store](https://chrome.goog
 
 ### Firefox addon
 
-It is also available as an [addon on Firefox](https://addons.mozilla.org/en-US/firefox/addon/arxiv-title-fixer/).
+~~It is also available as an [addon on Firefox](https://addons.mozilla.org/en-US/firefox/addon/arxiv-title-fixer/).~~
+
+Because [Firefox does not allow scripts on pdf pages](https://bugzilla.mozilla.org/show_bug.cgi?id=1454760), the extension does not work.
+
+[j3soon](https://github.com/j3soon) has created a clever workaround [j3soon/arxiv-utils](https://github.com/j3soon/arxiv-utils) which does work. 
 
 
 ### Userscript
