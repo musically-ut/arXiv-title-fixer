@@ -1,6 +1,6 @@
 {
   "name": "arXiv title fixer",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "manifest_version": 3,
   "description": "Set titles of papers on arXiv as <title> of the pdf-tabs.",
   "icons": {
@@ -28,8 +28,7 @@
     "default_title": "Put paper title as tab-title."
   },
   "permissions": [
-    "activeTab",
-    "tabs"
+    "activeTab"
   ],
   "host_permissions": [
     "*://export.arxiv.org/*",
