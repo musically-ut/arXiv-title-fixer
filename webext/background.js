@@ -1,36 +1,32 @@
-/* global chrome */
-(function() {
-    'use strict';
+// webext/background.js
+(function () {
+  "use strict";
 
-    function doInCurrentTab(tabCallback) {
-        chrome.tabs.query(
-            { currentWindow: true, active: true },
-            function (tabArray) { tabCallback(tabArray[0]); }
-        );
-    }
-
-    if (chrome.declarativeContent) {
-        chrome.runtime.onInstalled.addListener(function () {
-            chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-                chrome.declarativeContent.onPageChanged.addRules([{
-                    conditions: [
-                        new chrome.declarativeContent.PageStateMatcher({
-                            pageUrl: {
-                                hostEquals: 'arxiv.org',
-                                pathPrefix: '/pdf'
-                            }
-                        })
-                    ],
-                    actions: [ new chrome.declarativeContent.ShowPageAction() ]
-                }]);
-            });
-        });
+  // Function to update the action button based on URL
+  function updateActionButton(tabId, url) {
+    if (url && url.startsWith("https://arxiv.org/pdf/")) {
+      chrome.action.enable(tabId);
     } else {
-        // chrome.pageAction.show();
-        doInCurrentTab(function(tab) { chrome.pageAction.show(tab.id); });
+      chrome.action.disable(tabId);
     }
+  }
 
-    chrome.pageAction.onClicked.addListener(function (tab) {
-        chrome.tabs.sendMessage(tab.id, 'update-page-title.');
+  // Listen for tab activation
+  chrome.tabs.onActivated.addListener(function (activeInfo) {
+    chrome.tabs.get(activeInfo.tabId, function (tab) {
+      updateActionButton(tab.id, tab.url);
     });
+  });
+
+  // Listen for tab updates
+  chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (changeInfo.status === "complete") {
+      updateActionButton(tabId, tab.url);
+    }
+  });
+
+  // Handle action button clicks
+  chrome.action.onClicked.addListener(function (tab) {
+    chrome.tabs.sendMessage(tab.id, { action: "update-page-title" });
+  });
 })();
