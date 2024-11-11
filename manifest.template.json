@@ -1,14 +1,13 @@
 {
   "name": "arXiv title fixer",
   "version": "0.4.0",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "Set titles of papers on arXiv as <title> of the pdf-tabs.",
   "icons": {
     "512": "webext/images/waiter512.png"
   },
   "background": {
-    "scripts": [ "webext/background.js" ],
-    "persistent": false
+    "service_worker": "webext/background.js"
   },
   "content_scripts": [
     {
@@ -22,15 +21,17 @@
       "run_at": "document_end"
     }
   ],
-  "page_action": {
+  "action": {
     "default_icon": {
       "38": "webext/images/waiter38.png"
     },
     "default_title": "Put paper title as tab-title."
   },
   "permissions": [
-    "declarativeContent",
     "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
     "*://export.arxiv.org/*",
     "*://arxiv.org/*"
   ],
