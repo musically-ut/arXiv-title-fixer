@@ -67,7 +67,7 @@
       if (paperTitle) {
         addTitleToHead(paperTitle);
       } else {
-        setTitleForPdf(); // Fetch the title again if not available
+        runForCurrentPage(); // Fetch the title again if not available
       }
     }
   });
@@ -112,6 +112,29 @@
     });
   }
 
+  function requestPage(url) {
+    return new Promise(function (resolve, reject) {
+      chrome.runtime.sendMessage(
+        { action: "fetch-url", url: url },
+        function (response) {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+            return;
+          }
+          if (!response) {
+            reject(new Error("No response from background worker."));
+            return;
+          }
+          if (response.error) {
+            reject(new Error(response.error));
+            return;
+          }
+          resolve(response.body);
+        }
+      );
+    });
+  }
+
   function extractTitleFromXml(xmlText) {
     try {
       var parsed = new DOMParser().parseFromString(xmlText, "application/xml");
@@ -123,7 +146,17 @@
     }
   }
 
-  function setTitleForPdf() {
+  function parseHtml(htmlString) {
+    return new DOMParser().parseFromString(htmlString, "text/html");
+  }
+
+  function getMetaCitationTitle(doc) {
+    var meta = doc.querySelector('meta[name="citation_title"]');
+    return meta ? meta.content : null;
+  }
+
+  // arXiv handlers
+  function setTitleForArxivPdf() {
     var paperId = null;
 
     try {
@@ -148,27 +181,122 @@
     }
   }
 
-  function setTitleForAbs() {
-    var paperTitle;
-    var titleElements = document.getElementsByClassName("title");
-    if (titleElements.length > 0) {
-      paperTitle = titleElements[0].innerText;
-    } else {
-      warn("Unable to find a title element in the page.");
-      paperTitle = TITLE_PLACEHOLDER;
-    }
-    addTitleToHead(paperTitle);
+  function setTitleForArxivAbs() {
+    var title =
+      document.querySelector(".title") || document.querySelector("h1.title");
+    var paperTitleText = title ? title.innerText : TITLE_PLACEHOLDER;
+    addTitleToHead(paperTitleText);
   }
 
-  var pathComponents = window.location.pathname.split("/");
-  log({ pathComponents });
-  if (
-    (pathComponents.length > 0 &&
-      pathComponents[pathComponents.length - 1].endsWith(".pdf")) ||
-    (pathComponents.length > 1 && pathComponents[1] === "pdf")
-  ) {
-    setTitleForPdf();
-  } else {
-    setTitleForAbs();
+  // OpenReview handlers
+  function extractOpenReviewTitle(doc) {
+    var metaTitle = getMetaCitationTitle(doc);
+    if (metaTitle) {
+      return metaTitle.trim();
+    }
+    var header = doc.querySelector("h2.note_content_title");
+    if (header) {
+      return header.textContent.trim();
+    }
+    return null;
   }
+
+  function setTitleForOpenReviewAbs() {
+    var title = extractOpenReviewTitle(document) || TITLE_PLACEHOLDER;
+    paperTitle = title;
+    addTitleToHead(title);
+  }
+
+  function setTitleForOpenReviewPdf() {
+    var searchParams = new URLSearchParams(window.location.search);
+    var forumId = searchParams.get("id");
+    if (!forumId) {
+      warn("No OpenReview id found in PDF URL.");
+      return;
+    }
+    var forumUrl =
+      "https://openreview.net/forum?id=" + encodeURIComponent(forumId);
+    requestPage(forumUrl)
+      .then(function (htmlText) {
+        var doc = parseHtml(htmlText);
+        var title = extractOpenReviewTitle(doc) || TITLE_PLACEHOLDER;
+        paperTitle = title;
+        exponentialBackoff(title, initialTimeout);
+      })
+      .catch(function (err) {
+        warn("Unable to fetch OpenReview forum page.", err);
+      });
+  }
+
+  // ACL Anthology handlers
+  function extractAclTitle(doc) {
+    var metaTitle = getMetaCitationTitle(doc);
+    if (metaTitle) {
+      return metaTitle.trim();
+    }
+    var pageTitle = doc.querySelector("#title");
+    if (pageTitle) {
+      return pageTitle.textContent.trim();
+    }
+    return null;
+  }
+
+  function setTitleForAclAbs() {
+    var title = extractAclTitle(document) || TITLE_PLACEHOLDER;
+    paperTitle = title;
+    addTitleToHead(title);
+  }
+
+  function setTitleForAclPdf() {
+    var pdfUrl = window.location.href;
+    var absUrl = pdfUrl.replace(/\.pdf(\?.*)?$/, "/");
+    requestPage(absUrl)
+      .then(function (htmlText) {
+        var doc = parseHtml(htmlText);
+        var title = extractAclTitle(doc) || TITLE_PLACEHOLDER;
+        paperTitle = title;
+        exponentialBackoff(title, initialTimeout);
+      })
+      .catch(function (err) {
+        warn("Unable to fetch ACL Anthology page.", err);
+      });
+  }
+
+  function runForCurrentPage() {
+    var host = window.location.hostname;
+    var pathComponents = window.location.pathname.split("/");
+    log({ host: host, pathComponents: pathComponents });
+
+    if (host.indexOf("arxiv.org") !== -1) {
+      if (
+        (pathComponents.length > 0 &&
+          pathComponents[pathComponents.length - 1].endsWith(".pdf")) ||
+        (pathComponents.length > 1 && pathComponents[1] === "pdf")
+      ) {
+        setTitleForArxivPdf();
+      } else {
+        setTitleForArxivAbs();
+      }
+      return;
+    }
+
+    if (host.indexOf("openreview.net") !== -1) {
+      if (window.location.pathname.indexOf("/pdf") === 0) {
+        setTitleForOpenReviewPdf();
+      } else {
+        setTitleForOpenReviewAbs();
+      }
+      return;
+    }
+
+    if (host.indexOf("aclanthology.org") !== -1) {
+      if (window.location.pathname.endsWith(".pdf")) {
+        setTitleForAclPdf();
+      } else {
+        setTitleForAclAbs();
+      }
+    }
+  }
+
+  runForCurrentPage();
 })();

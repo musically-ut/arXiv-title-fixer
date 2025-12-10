@@ -3,6 +3,13 @@
   "use strict";
 
   const API_BASE = "https://export.arxiv.org/api/query?id_list=";
+  async function fetchUrl(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Request failed: " + response.status);
+    }
+    return response.text();
+  }
 
   // Function to update the action button based on URL
   function updateActionButton(tabId, url) {
@@ -44,6 +51,18 @@
           });
         });
       return true; // Keep the message channel open for async response.
+    }
+    if (message.action === "fetch-url" && message.url) {
+      fetchUrl(message.url)
+        .then(function (body) {
+          sendResponse({ body: body });
+        })
+        .catch(function (err) {
+          sendResponse({
+            error: err && err.message ? err.message : String(err),
+          });
+        });
+      return true;
     }
     return undefined;
   });

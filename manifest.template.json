@@ -1,6 +1,6 @@
 {
   "name": "arXiv title fixer",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "manifest_version": 3,
   "description": "Set titles of papers on arXiv as <title> of the pdf-tabs.",
   "icons": {
@@ -13,7 +13,11 @@
     {
       "matches": [
         "*://arxiv.org/pdf/*",
-        "*://arxiv.org/abs/*"
+        "*://arxiv.org/abs/*",
+        "*://openreview.net/pdf*",
+        "*://openreview.net/forum*",
+        "*://aclanthology.org/*.pdf",
+        "*://aclanthology.org/*"
       ],
       "js": [
         "webext/contentscript.js"
@@ -32,7 +36,9 @@
   ],
   "host_permissions": [
     "*://export.arxiv.org/*",
-    "*://arxiv.org/*"
+    "*://arxiv.org/*",
+    "*://openreview.net/*",
+    "*://aclanthology.org/*"
   ],
   "applications": {
     "gecko": {
