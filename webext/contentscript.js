@@ -27,12 +27,6 @@
     }
   }
 
-  function getPaperTitleFromResponse(feed) {
-    var title = feed.querySelector("entry > title");
-    log("Title:", title);
-    return title ? title.textContent.trim() : TITLE_PLACEHOLDER;
-  }
-
   function addTitleToDocument(titleText) {
     document.title = titleText;
   }
@@ -95,6 +89,40 @@
     }, timeout);
   }
 
+  function requestPaperTitle(paperId) {
+    return new Promise(function (resolve, reject) {
+      chrome.runtime.sendMessage(
+        { action: "fetch-paper-title", paperId: paperId },
+        function (response) {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+            return;
+          }
+          if (!response) {
+            reject(new Error("No response from background worker."));
+            return;
+          }
+          if (response.error) {
+            reject(new Error(response.error));
+            return;
+          }
+          resolve(response.xmlText);
+        }
+      );
+    });
+  }
+
+  function extractTitleFromXml(xmlText) {
+    try {
+      var parsed = new DOMParser().parseFromString(xmlText, "application/xml");
+      var title = parsed.querySelector("entry > title");
+      return title ? title.textContent.trim() : TITLE_PLACEHOLDER;
+    } catch (err) {
+      warn("Failed to parse XML response", err);
+      return TITLE_PLACEHOLDER;
+    }
+  }
+
   function setTitleForPdf() {
     var paperId = null;
 
@@ -108,29 +136,15 @@
     }
 
     if (paperId !== null) {
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            try {
-              paperTitle = getPaperTitleFromResponse(xhr.responseXML);
-              exponentialBackoff(paperTitle, initialTimeout);
-            } catch (e) {
-              warn("Unable to determine title of paper. Error: ", e);
-            }
-          } else {
-            warn("Cannot handle response with status ", xhr.status);
-          }
-        }
-      };
-
-      xhr.onerror = function () {
-        warn("Unable to fetch paper data from arXiv API.");
-      };
-
-      xhr.open("GET", "https://export.arxiv.org/api/query?id_list=" + paperId);
-      xhr.responseType = "document";
-      xhr.send();
+      requestPaperTitle(paperId)
+        .then(function (xmlText) {
+          var title = extractTitleFromXml(xmlText);
+          paperTitle = title || TITLE_PLACEHOLDER;
+          exponentialBackoff(paperTitle, initialTimeout);
+        })
+        .catch(function (e) {
+          warn("Unable to fetch paper data from arXiv API.", e);
+        });
     }
   }
 
